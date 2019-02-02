@@ -1,0 +1,31 @@
+plugins {
+    id "nebula.ospackage" version "4.10.0"
+}
+
+version = "1.0"
+description = "Die Technik-AG-Bootanimation"
+
+task buildPackage(type: Deb) {
+    group = "distribution"
+
+    packageName = "t-ag-plymouth-theme"
+    maintainer = "Technik-AG"
+    release = "1"
+    user = "root"
+
+    provides("plymouth-theme")
+
+    // Package dependencies
+    requires("plymouth")
+
+    // Scripts
+    postInstallFile file("./src/postinst.sh")
+    preUninstallFile file("./src/prerm.sh")
+    postUninstallFile file("./src/postrm.sh")
+
+    // Copy the connection settings
+    from("./src/technik-ag") {
+        into("/usr/share/plymouth/themes/technik-ag")
+    }
+}
+assemble.dependsOn buildPackage
